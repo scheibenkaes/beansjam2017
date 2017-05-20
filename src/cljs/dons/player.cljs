@@ -6,16 +6,22 @@
             [dons.cards :as cards]))
 
 (defn Hand []
-  (let []
+  (let [hand (re-frame/subscribe [:player-hand])
+        turn (re-frame/subscribe [:turn])]
     (fn []
-      [:div.columns
-       [:div.column.slot-1 [cards/Card logic/concealer]]
-       [:div.column.slot-2 [cards/Card logic/goons]]
-       [:div.column.slot-3 [cards/Card (logic/->card :id :test)]]
-       [:div.column.slot-4 [cards/Card (logic/->card :id :test)]]
-       [:div.column.slot-5 [cards/Card (logic/->card :id :test)]]
-       
-       ])))
+      (let []
+        [:div.columns
+         (when-not (empty? @hand)
+           (doall
+            (map-indexed (fn [idx [hand-idx card]]
+                           ^{:key (str "card" idx)}
+                           [:div.column
+                            [cards/Card card]
+                            (when (= :player @turn)
+                              [:button.button {:on-click (fn [_]
+                                                           (re-frame/dispatch [:play-card [hand-idx card]]))} "Karte spielen"])])
+                         @hand)))]))))
+
 
 (defn Player
   []

@@ -6,5 +6,6 @@
 *** DONE Zip file bauen
 ** TODO Spielkonzept
 *** Einfluss auf 100 bringen
-** TODO GUI
+** TODO GUI [0/1]
+*** TODO 
 ** TODO 
