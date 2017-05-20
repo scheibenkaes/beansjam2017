@@ -7,14 +7,14 @@
   )
 
 (defn Header
-  ""
   []
-  (let []
+  (let [influence (re-frame/subscribe [:opponent-influence])]
     (fn []
       [:div.header.columns
        [:div.column.is-three-quarters
         [:h2 "Dons"]]
-       [:div.column.opponent "Opponent goes here"]])))
+       [:div.column.opponent
+        [:div (str "💪 " @influence)]]])))
 
 
 (defn Main

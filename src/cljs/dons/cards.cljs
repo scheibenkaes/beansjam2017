@@ -1,12 +1,13 @@
 (ns dons.cards)
 
 
-(defn ->card [& {:keys [id img title]
-                 :or {img "img/card.png" title "No Title"}}]
+(defn ->card [& {:keys [id img title effect]
+                 :or {img "img/card.png" title "No Title" effect identity}}]
   {:id id
    :card? true
    :img img
-   :title title})
+   :title title
+   :effect effect})
 
 
 (defn Card [{:keys [title img id]}]
