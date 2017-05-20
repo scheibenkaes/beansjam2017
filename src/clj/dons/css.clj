@@ -44,5 +44,8 @@
    {:font-size "xx-large"}
    ]
 
+  [:.player-influence
+   {:font-size "xx-large"}
+   ]
   
   )

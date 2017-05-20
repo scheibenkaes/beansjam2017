@@ -7,6 +7,14 @@
  (fn [db]
    (:player/don db)))
 
+
+(re-frame/reg-sub
+ :player-influence
+ (fn [db]
+   (-> db
+       :game/game
+       :player-influence)))
+
 (re-frame/reg-sub
  :game-stats
  (fn [db]

@@ -2,7 +2,8 @@
   (:require [re-frame.core :as re-frame]
             [dons.dons :as dons]
             [dons.cards :as cards]
-            [dons.stats :as stats])
+            [dons.stats :as stats]
+            [dons.player :as player])
   )
 
 (defn Header
@@ -28,23 +29,13 @@
        [:div.column [stats/Stats]]]
       )))
 
-(defn PlayerArea
-  ""
-  []
-  (let [player-don (re-frame.core/subscribe [:player-don])]
-    (fn []
-      [:div.player-area.columns
-       [:div.don.column [dons/Don @player-don]]
-       [:div.hand.column "Hand goes here"]
-       [:div.hand.column "Controlls here"]])))
-
 (defn Game []
   (let []
     (fn []
       [:div.game
         [Header]
         [Main]
-        [PlayerArea]])))
+        [player/Player]])))
 
 (defn main-panel []
   (let []

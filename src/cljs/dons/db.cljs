@@ -4,7 +4,7 @@
 (defn initial-game-state
   ""
   []
-  {})
+  {:player-influence 0})
 
 
 (def default-db
