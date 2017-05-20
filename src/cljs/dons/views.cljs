@@ -3,6 +3,7 @@
             [dons.dons :as dons]
             [dons.cards :as cards]
             [dons.stats :as stats]
+            [dons.logic :as logic]
             [dons.player :as player])
   )
 
@@ -25,8 +26,8 @@
       [:div.main.columns
        [:div.column
         [:h1 "Interstellarer Schwarz-Markt"]]
-       [:div.column [cards/Card (cards/->card :id :test)]]
-       [:div.column [stats/Stats]]]
+       [:div.column [cards/Card (logic/->card :id :test)]]
+       [:div.column.is-2 [stats/Stats]]]
       )))
 
 (defn Game []

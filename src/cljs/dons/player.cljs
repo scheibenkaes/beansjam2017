@@ -2,17 +2,18 @@
   (:require [re-frame.core :as re-frame]
             [dons.dons :as dons]
             [dons.ctrls :as ctrls]
+            [dons.logic :as logic]
             [dons.cards :as cards]))
 
 (defn Hand []
   (let []
     (fn []
       [:div.columns
-       [:div.column.slot-1 [cards/Card (cards/->card :id :test)]]
-       [:div.column.slot-2 [cards/Card (cards/->card :id :test)]]
-       [:div.column.slot-3 [cards/Card (cards/->card :id :test)]]
-       [:div.column.slot-4 [cards/Card (cards/->card :id :test)]]
-       [:div.column.slot-5 [cards/Card (cards/->card :id :test)]]
+       [:div.column.slot-1 [cards/Card logic/concealer]]
+       [:div.column.slot-2 [cards/Card logic/goons]]
+       [:div.column.slot-3 [cards/Card (logic/->card :id :test)]]
+       [:div.column.slot-4 [cards/Card (logic/->card :id :test)]]
+       [:div.column.slot-5 [cards/Card (logic/->card :id :test)]]
        
        ])))
 
