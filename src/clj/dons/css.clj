@@ -40,5 +40,9 @@
              :color "white"}]
    ]
 
+  [:.stats
+   {:font-size "xx-large"}
+   ]
+
   
   )

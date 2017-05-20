@@ -6,3 +6,8 @@
  :player-don
  (fn [db]
    (:player/don db)))
+
+(re-frame/reg-sub
+ :game-stats
+ (fn [db]
+   (:game/stats db)))
