@@ -1,13 +1,16 @@
 (ns dons.css
   (:require [garden.def :refer [defstyles]]))
 
+(def width "1600px")
+(def height "1050px")
+
 (defstyles screen
   [:body {}]
 
   [:.game-container
    {
-    :width "1024px"
-    :height "768px"
+    :width width
+    :height height
     :background "url(../img/background.png)"
     :color "#fff"
     }]
@@ -19,7 +22,23 @@
 
   [:.header {:height "33%" :min-height "33%"}]
   [:.main {:height "33%" :min-height "33%"}]
-  [:.player-area {:height "33%" :min-height "33%"
+  [:.player-area {
+                  :height "33%" :min-height "33%"
                   :vertical-align "bottom"
                   :padding-top "115px"}]
+
+  [:.card
+   {
+    :height "85px" :min-height "85px"
+    :width "64px" :min-width "64px"
+
+    }
+   [:.title {:position "relative"
+             :font-size "small"
+             :top "-85px"
+             :left "3px"
+             :color "white"}]
+   ]
+
+  
   )

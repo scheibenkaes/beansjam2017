@@ -1,6 +1,7 @@
 (ns dons.views
   (:require [re-frame.core :as re-frame]
-            [dons.dons :as dons])
+            [dons.dons :as dons]
+            [dons.cards :as cards])
   )
 
 (defn Header
@@ -22,7 +23,7 @@
       [:div.main.columns
        [:div.column
         [:h1 "Interstellarer Schwarz-Markt"]]
-       [:div.column "Cards here"]
+       [:div.column [cards/Card (cards/->card :id :test)]]
        [:div.column.stats "Stats here"]]
       )))
 
