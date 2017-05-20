@@ -1,4 +1,12 @@
-(ns dons.db)
+(ns dons.db
+  (:require [dons.dons :as dons]))
+
+(defn initial-game-state
+  ""
+  []
+  {})
+
 
 (def default-db
-  {:name "re-frame"})
+  {:player/don dons/don-pedro
+   :game/game (initial-game-state)})

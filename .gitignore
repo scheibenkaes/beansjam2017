@@ -5,3 +5,5 @@
 out
 screen.css
 /resources/public/game.zip
+/.nrepl-port
+/game.zip

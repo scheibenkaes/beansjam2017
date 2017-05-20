@@ -1,9 +1,11 @@
 
-release: clean min build-css zip
+release: clean min build-css imgs zip
 
+imgs:
+	cp -v resources/private/*.png resources/public/img
 
 clean:
-	rm ./game.zip
+	rm -f ./game.zip
 	lein clean
 
 min:

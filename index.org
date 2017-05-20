@@ -1,0 +1,10 @@
+* Weltraum-Mafia [50%]
+** DONE Namen ausdenken => Dons
+** DONE GameJolt Spiel anlegen
+*** DONE Mit Resourcen testen
+** DONE Makefile 
+*** DONE Zip file bauen
+** TODO Spielkonzept
+*** Einfluss auf 100 bringen
+** TODO GUI
+** TODO 
