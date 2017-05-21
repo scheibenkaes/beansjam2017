@@ -74,15 +74,30 @@
           :effect (fn [state]
                     (-> state
                         (update-in [:stats :influence] (partial + 4))
-                        (update-in [:status :money] (partial + 1))))))
+                        (update-in [:stats :money] (partial + 1))))))
 
 (defn mars []
   (->card :id :planet/mars
           :planet? true
           :cost 6
           :title "Mars"
+          :description "Hat einen harten rechten Haken"
+          :effect-desc (str "+5 " influence-char)
           :effect (fn [state]
                     (update-in state [:stats :influence] (partial + 5)))))
+
+
+(defn jupiter []
+  (->card :id :planet/jupiter
+          :planet? true
+          :cost 5
+          :title "Jupiter"
+          :description "Ruht in sich selbst"
+          :effect-desc (str "+2 " influence-char ", +2 $")
+          :effect (fn [state]
+                    (-> state
+                        (update-in [:stats :influence] (partial + 2))
+                        (update-in [:stats :money] (partial + 2))))))
 
 (def all-cards
   #{(noob) (collector) (concealer) (goons) (jackson) (mars)})
@@ -96,7 +111,6 @@
 (def initial-stats
   {:influence 0
    :money     0})
-
 
 (def initial-state
   {:player-hand        (sorted-map)
@@ -128,6 +142,8 @@
   (concat
    (repeatedly 1 jackson)
    (repeatedly 1 mars)
+   (repeatedly 1 jupiter)
+   
    (repeatedly 10 goons)
    (repeatedly 10 concealer)))
 
