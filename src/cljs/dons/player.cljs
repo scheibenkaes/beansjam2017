@@ -32,7 +32,6 @@
         discard    (re-frame/subscribe [:player-discard])
         deck       (re-frame/subscribe [:player-deck])]
     (fn []
-      (println @discard)
       [:div.player-area.columns
        [:div.don.column.is-2
         [:div.columns

@@ -55,7 +55,6 @@
 (re-frame/reg-event-fx
  :run-opponent
  (fn  [cofx [_ _]]
-   (println "running AI")
    (let [game      (-> cofx :db :game/game)
          new-state (logic/game-event [:event/opponents-turn nil] game)
          ai-done?  (:ai/done? new-state)

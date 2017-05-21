@@ -232,7 +232,6 @@
         idx  (some (fn [[i c]] (when (= (:internal/id card)
                                        (:internal/id c))
                                 i)) hand)]
-    (println "PLAY i" (:internal/id card) " " idx)
     (assert (int? idx) (str "No card with id " (:internal/id card) " in hand " hand))
 
 
@@ -244,7 +243,6 @@
 
 (defmethod game-event :event/opponents-turn
   [_ {:keys [opponent-hand blackmarket] :as state}]
-  (println "I'm a robot" (:stats state))
   (if-let [[idx card] (first opponent-hand)]
     (game-event [:event/play-card {:card card :who :opponent}] state)
 
@@ -256,8 +254,6 @@
             cards-for-sale   (sort-by :cost > (vals blackmarket))
             first-affordable (some (fn [{cost :cost :as c}]
                                      (when (>= money cost) c)) cards-for-sale)]
-        (println "AI has " money " $")
-        (println "AI I can afford " first-affordable)
         (if first-affordable
           (game-event [:event/buy-card {:who :opponent :card first-affordable}] state)
           (assoc state :ai/done? true))))))
@@ -369,7 +365,6 @@
                                      (- amount (:cost card))))]
 
     (when (not was-player?)
-      (println "storing in dbg")
       (reset! dbg {:card card
                    :state state}))
 
