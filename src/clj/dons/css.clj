@@ -7,8 +7,22 @@
 (defstyles screen
   [:html {
           :background "url(../img/background.png) repeat"
+          :width "100%"
+          :height "100%"
           }]
 
+  [:.end-screen
+   {:font-size "xx-large"}
+
+   [:.result
+    {:color "#fff"}]
+   
+   [:h1
+    {:color "#fff"}
+    
+
+    ]]
+  
   [:.game-container
    {
     :width width

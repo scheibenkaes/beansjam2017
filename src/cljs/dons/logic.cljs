@@ -1,5 +1,13 @@
 (ns dons.logic)
 
+(def target-influence 50)
+
+(defn winner
+  "Determine the winner :player or :opponent, nil if none yet."
+  [{:keys [player-influence opponent-influence]}]
+  (cond (>= player-influence target-influence)   :player
+        (>= opponent-influence target-influence) :opponent
+        :default                                 nil))
 
 (defn ->card [& {:keys [id img title effect text planet? cost description]
                  :or   {img     "img/card.png" title "No Title" effect identity text ""
@@ -52,7 +60,7 @@
           :cost 5
           :title "Jackson"
           :effect (fn [state]
-                    (-> state 
+                    (-> state
                         (update-in [:stats :influence] (partial + 4))
                         (update-in [:status :money] (partial + 1))))))
 
@@ -92,7 +100,8 @@
    :opponent-influence 0
    :stats              initial-stats
    :blackmarket        (sorted-map)
-   :blackmarket-deck   []})
+   :blackmarket-deck   []
+   :winner             nil})
 
 (def num-cards-at-begin 5)
 
@@ -201,12 +210,12 @@
                    stats
                    cards-being-played]
             :as state}]
-  (let [was-player?      (= who :player)
-        deck             (if was-player? player-deck opponent-deck)
-        deck-k           (if was-player? :player-deck :opponent-deck)
+  (let [was-player? (= who :player)
+        deck        (if was-player? player-deck opponent-deck)
+        deck-k      (if was-player? :player-deck :opponent-deck)
 
-        hand             (if was-player? player-hand opponent-hand)
-        hand-k           (if was-player? :player-hand :opponent-hand)
+        hand   (if was-player? player-hand opponent-hand)
+        hand-k (if was-player? :player-hand :opponent-hand)
 
         discard          (if was-player? player-discard opponent-discard)
         discard-k        (if was-player? :player-discard :opponent-discard)
@@ -222,14 +231,16 @@
 
         new-hand (to-hand (take hand-size deck))
         new-deck (drop hand-size deck)]
-    (assoc state
-           deck-k new-deck
-           hand-k new-hand
-           influence-k (+ influence-old influence-gained)
-           discard-k (if enough-in-deck? discard-after-play [])
-           :cards-being-played []
-           :stats initial-stats
-           :turn (if was-player? :opponent :player))))
+    (as-> state s
+      (assoc s
+             deck-k new-deck
+             hand-k new-hand
+             influence-k (+ influence-old influence-gained)
+             discard-k (if enough-in-deck? discard-after-play [])
+             :cards-being-played []
+             :stats initial-stats
+             :turn (if was-player? :opponent :player))
+      (assoc s :winner (winner s)))))
 
 (def dbg (atom {}))
 
@@ -262,7 +273,7 @@
         blackmarket-new        (dissoc blackmarket card-idx)
         replacement-card       (first blackmarket-deck)
         remaining-black-market (drop 1 blackmarket-deck)
-        blackmarket-deck-new   (if (empty? remaining-black-market)                         
+        blackmarket-deck-new   (if (empty? remaining-black-market)
                                  (shuffle (remove
                                            :planet?
                                            (initial-blackmarket-deck)))

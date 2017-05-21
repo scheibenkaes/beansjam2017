@@ -7,6 +7,11 @@
   (-> db :game/game key))
 
 (re-frame/reg-sub
+ :game
+ (fn [db]
+   (:game/game db)))
+
+(re-frame/reg-sub
  :player-don
  (fn [db]
    (:player/don db)))
@@ -88,7 +93,10 @@
  :player-discard
  (fn [db] (from-game-state db :player-discard)))
 
-
 (re-frame/reg-sub
  :opponent-discard
  (fn [db] (from-game-state db :opponent-discard)))
+
+(re-frame/reg-sub
+ :winner
+ (fn [db] (from-game-state db :winner)))

@@ -52,13 +52,40 @@
                      @being-played)]]
       )))
 
-(defn Game []
-  (let []
+(defn EndScreen
+  []
+  (let [final-state (re-frame/subscribe [:game])
+        player-don (re-frame/subscribe [:player-don])]
     (fn []
-      [:div.game
-        [Header]
-        [Main]
-        [player/Player]])))
+      (let [{:keys [winner
+                    player-influence
+                    opponent-influence]} @final-state
+            player-won? (= :player winner)]
+        [:div.end-screen.container
+         [:div.content
+          [:h1 "Spielende"]
+          [:div.result (str "Gewinner mit " (max player-influence
+                                          opponent-influence)
+                     " Einflusspunkten " (if player-won? "Du" "der Computer")
+                     "!!1!"
+                     )]]]))))
+
+(comment
+  (re-frame/dispatch [:show-end-screen])
+
+
+  )
+
+(defn Game []
+  (let [winner (re-frame/subscribe [:winner])]
+    (fn []
+      (if-not @winner
+        [:div.game
+         [Header]
+         [Main]
+         [player/Player]]
+
+        [EndScreen]))))
 
 (defn main-panel []
   (let []

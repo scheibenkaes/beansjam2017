@@ -11,6 +11,12 @@
  (fn  [_ _]
    db/default-db))
 
+
+(re-frame/reg-event-db
+ :show-end-screen
+ (fn  [db _]
+   (assoc-in db [:game/game :winner] :player)))
+
 (re-frame/reg-event-db
  :start-game
  (fn  [db _]
