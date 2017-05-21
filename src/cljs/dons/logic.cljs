@@ -9,7 +9,7 @@
         (>= opponent-influence target-influence) :opponent
         :default                                 nil))
 
-(defn ->card [& {:keys [id img title effect text planet? cost description]
+(defn ->card [& {:keys [id img title effect effect-desc text planet? cost description]
                  :or   {img     "img/card.png" title "No Title" effect identity text ""
                         planet? false          cost  1}}]
   {:id          id
@@ -21,20 +21,26 @@
    :description description
    :text        text
    :effect      effect
+   :effect-desc effect-desc
    :internal/id (gensym)})
 
 ;;; CARDS
 
+(def influence-char "💪")
+
 (defn noob []
   (->card :id :card/noob
           :title "Space Noob"
-          :description "Sie sind noch etwas grün hinter den Ohren."
+          :description (str "Neu in der Gang.")
+          :effect-desc (str "+1 " influence-char) 
           :effect (fn [state]
                     (update-in state [:stats :influence] (partial + 1)))))
 
 (defn collector []
   (->card :id :card/collector
           :title "Eintreiber"
+          :description "\"Her mit der Kohle\""
+          :effect-desc "+1 $"
           :effect (fn [state]
                     (update-in state [:stats :money] (partial + 1)))))
 
@@ -42,6 +48,8 @@
   (->card :id :card/concealer
           :title "Space Hehler"
           :cost 2
+          :description "Kauft & verkauft alles"
+          :effect-desc "+2 $"
           :effect (fn [state]
                     (update-in state [:stats :money] (partial + 2)))))
 
@@ -49,6 +57,8 @@
   (->card :id :card/goons
           :title "Schlägertypen"
           :cost 3
+          :description "Sind ziemlich übel drauf"
+          :effect-desc (str "+2 " influence-char)
           :effect (fn [state]
                     (update-in state [:stats :influence] (partial + 2)))))
 

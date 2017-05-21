@@ -16,13 +16,13 @@
 
    [:.result
     {:color "#fff"}]
-   
+
    [:h1
     {:color "#fff"}
-    
+
 
     ]]
-  
+
   [:.game-container
    {
     :width width
@@ -64,12 +64,21 @@
              :color "black"}]
 
    [:.cost {:position "absolute"
-            
+
             :font-size "small"
             :top "7px"
             :left "108px"
             :font-weight "bold"
             :color "black"}]
+
+   [:.description {:position "absolute"
+                   :font-size "small"
+                   :font-style "italic"
+                   :top "60px"
+                   :left "9px"
+                   :font-weight "bold"
+                   :color "black"
+}]
    ]
 
   [:.stats
@@ -79,5 +88,5 @@
   [:.player-influence
    {:font-size "xx-large"}
    ]
-  
+
   )
