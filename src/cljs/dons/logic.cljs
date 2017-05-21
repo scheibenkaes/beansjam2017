@@ -66,12 +66,23 @@
   (->card :id :card/journalist
           :title "Journalist"
           :cost 4
-          :description "Bekommt jede Story"
+          :description "Bekommt jede Story, hat aber seinen Preis"
           :effect-desc (str "+4 " influence-char ", -2 $")
           :effect (fn [state]
                     (-> state
                         (update-in [:stats :influence] (partial + 4))
                         (update-in [:stats :money] #(- % 2))))))
+
+(defn robbery []
+  (->card :id :card/robbery
+          :title "Bank-Überfall"
+          :cost 4
+          :description "Auch im Weltall sind die Banken nicht sicher"
+          :effect-desc (str "- 2 " influence-char ", + 4 $")
+          :effect (fn [state]
+                    (-> state
+                        (update-in [:stats :money] (partial + 4))
+                        (update-in [:stats :influence] #(- % 2))))))
 
 
 ;;; PLANETS 
@@ -157,6 +168,7 @@
 
    
    (repeatedly 3 journalist)
+   (repeatedly 3 robbery)
    (repeatedly 10 goons)
    (repeatedly 10 concealer)))
 
