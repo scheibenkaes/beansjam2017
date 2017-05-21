@@ -49,13 +49,19 @@
   (->card :id :planet/jackson
           :planet? true
           :cost 5
-          :title "Jackson"))
+          :title "Jackson"
+          :effect (fn [state]
+                    (-> state 
+                        (update-in [:stats :influence] (partial + 4))
+                        (update-in [:status :money] (partial + 1))))))
 
 (defn mars []
   (->card :id :planet/mars
           :planet? true
           :cost 6
-          :title "Mars"))
+          :title "Mars"
+          :effect (fn [state]
+                    (update-in state [:stats :influence] (partial + 5)))))
 
 (def all-cards
   #{(noob) (collector) (concealer) (goons) (jackson) (mars)})
