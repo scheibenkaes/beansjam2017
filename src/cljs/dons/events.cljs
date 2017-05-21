@@ -25,12 +25,11 @@
 (comment
   (@dbg))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
  :player-turn-done
- (fn  [db [_ _]]
-   (let [game (logic/game-event [:event/turn-done :player] (:game/game db))]
-     (reset! dbg game)
-     (assoc db :game/game game))))
+ (fn  [cofx [_ _]]
+   (let [game (logic/game-event [:event/turn-done :player] (:game/game (:db cofx)))]
+     {:db (assoc (:db cofx) :game/game game)})))
 
 (re-frame/reg-event-db
  :set-player-don
