@@ -22,17 +22,24 @@
   ""
   []
   (let [being-played (re-frame/subscribe [:cards-being-played])
-        blackmarket (re-frame/subscribe [:blackmarket])]
+        blackmarket  (re-frame/subscribe [:blackmarket])
+        player-turn? (re-frame/subscribe [:is-player-turn?])
+        stats        (re-frame/subscribe [:game-stats])]
     (fn []
       [:div.main
        [:div.columns
-        [:div.column
+        [:div.column.is-2
          [:h1 "Interstellarer Schwarz-Markt"]]
         [:div.column.buying
          [:div.columns
-          (map-indexed (fn [idx [card-idx card]]
-                         ^{:key (str idx)}
-                         [:div.column [cards/Card card]]) @blackmarket)]]
+          (doall
+           (map-indexed (fn [idx [card-idx card]]
+                          (let [too-expensive? (> (:cost card) (-> @stats :money))]
+                            ^{:key (str idx)}
+                            [:div.column
+                             [cards/Card card]
+                             (when @player-turn?
+                               [:button.button {:disabled (if too-expensive? true false)} "Kaufen"])])) @blackmarket))]]
         [:div.column.is-2 [stats/Stats]]]
        [:div.being-played.columns
         (map-indexed (fn [idx card]

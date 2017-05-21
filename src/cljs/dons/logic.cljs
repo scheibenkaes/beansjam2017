@@ -45,13 +45,13 @@
   (->card :id :planet/jackson
           :planet? true
           :cost 5
-          :titel "Jackson"))
+          :title "Jackson"))
 
 (def mars
   (->card :id :planet/mars
           :planet? true
           :cost 6
-          :titel "Mars"))
+          :title "Mars"))
 
 (def all-cards
   #{noob collector concealer goons jackson mars})
