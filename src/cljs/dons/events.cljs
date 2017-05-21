@@ -20,10 +20,16 @@
    (let [game (logic/game-event [:event/play-card {:idx hand-idx :card card}] (:game/game db))]
      (assoc db :game/game game))))
 
+(def dbg (atom {}))
+
+(comment
+  (@dbg))
+
 (re-frame/reg-event-db
  :player-turn-done
  (fn  [db [_ _]]
    (let [game (logic/game-event [:event/turn-done :player] (:game/game db))]
+     (reset! dbg game)
      (assoc db :game/game game))))
 
 (re-frame/reg-event-db

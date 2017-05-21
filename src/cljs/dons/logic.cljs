@@ -68,8 +68,8 @@
 
 
 (def initial-state
-  {:player-hand        {}
-   :opponent-hand      []
+  {:player-hand        (sorted-map)
+   :opponent-hand      (sorted-map)
    :game-state         :state/pre-game
    :player-deck        []
    :opponent-deck      []
@@ -103,7 +103,7 @@
    (repeat 10 noob)))
 
 
-(defn to-indexed-map [coll]
+(defn to-hand [coll]
   (into (sorted-map)
         (map-indexed (fn [idx c] [idx c]) coll)))
 
@@ -117,8 +117,8 @@
            :game-state :state/started
            :player-deck player-deck
            :opponent-deck opponent-deck
-           :player-hand (to-indexed-map player-hand)
-           :opponent-hand (to-indexed-map opponent-hand))))
+           :player-hand (to-hand player-hand)
+           :opponent-hand (to-hand opponent-hand))))
 
 (defmethod game-event :event/play-card
   [[_ {idx :idx card :card}] {:keys [player-hand
@@ -132,11 +132,6 @@
 
 
 (def hand-size 5)
-
-(defn has-enough-cards [deck]
-  (>= (count deck) hand-size))
-
-(defn cards-needed-after-shuffle [deck ])
 
 ;; * Einfluss wird gut geschrieben
 ;;
@@ -155,29 +150,45 @@
   [[_ who] {:keys [player-hand
                    player-deck
                    player-discard
-                   
+                   player-influence
+
                    opponent-hand
                    opponent-deck
                    opponent-discard
-
+                   opponent-influence                   
+                   
                    stats
                    cards-being-played]
             :as state}]
-  (println "done" who)
-  (let [was-player? (= who :player)
-        deck        (if was-player? player-deck opponent-deck)
-        discard     (if was-player? player-discard opponent-discard)
-
+  (let [was-player?      (= who :player)
+        deck             (if was-player? player-deck opponent-deck)
+        deck-k           (if was-player? :player-deck :opponent-deck)
+        
+        hand             (if was-player? player-hand opponent-hand)
+        hand-k           (if was-player? :player-hand :opponent-hand)
+        
+        discard          (if was-player? player-discard opponent-discard)
+        discard-k        (if was-player? :player-discard :opponent-discard)
+        influence-k      (if was-player? :player-influence :opponent-influence)
+        influence-old    (if was-player? player-influence opponent-influence)
+        influence-gained (:influence stats)
+        
+        ;; Nachziehen
         discard-after-play (concat discard cards-being-played)
-        influence-gained   (:influence stats)
-        remaining-in-deck  (count deck)]
+        enough-in-deck?    (> (count deck) hand-size)
+
+        deck (if enough-in-deck? deck (shuffle discard-after-play))
+        
+        new-hand (to-hand (take hand-size deck))
+        new-deck (drop hand-size deck)]
     (assoc state
+           deck-k new-deck
+           hand-k new-hand
+           influence-k (+ influence-old influence-gained)
+           discard-k (if enough-in-deck? discard-after-play [])
            :cards-being-played []
            :stats initial-stats
-           :opponent-hand (if was-player? opponent-hand [])
-           :turn (if was-player? :opponent :player)))
- )
+           :turn (if was-player? :opponent :player))))
 
 
 (defmethod game-event :default [_ state] state)
-

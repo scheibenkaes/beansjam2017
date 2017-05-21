@@ -17,8 +17,10 @@
          (when-not @game-started?
            [Button (fn [_]
                      (re-frame/dispatch [:start-game])) "Spiel starten"])
-         (when (and (empty? @hand) @game-started?)
+         (when (and (empty? @hand)
+                    @game-started?
+                    @player-turn?)
            [Button (fn [_]
-                     (re-frame/dispatch [:player-turn-done])) "Zug beenden"])]
-        (when (not @player-turn?)
-          [Button (fn []) "AI spielt"])))))
+                     (re-frame/dispatch [:player-turn-done])) "Zug beenden"])
+         (when-not @player-turn?
+           [Button (fn []) "AI spielt"])]))))
