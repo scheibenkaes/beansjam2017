@@ -136,7 +136,7 @@
     (println "PLAY i" (:internal/id card) " " idx)
     (assert (int? idx) (str "No card with id " (:internal/id card) " in hand " hand))
 
-    
+
     (-> state
         (update-in [:cards-being-played] conj card)
         (update-in [hand-k] dissoc idx)
@@ -161,9 +161,9 @@
 ;; Ja: Gespielte + Abgelegte bilden neues Deck
 ;;     Es werden 5 - x Karten vom Deck gezogen
 ;; Nein: 5 Ziehen
-;; 
+;;
 ;; * Der andere ist dran
-;; 
+;;
 (defmethod game-event :event/turn-done
   [[_ who] {:keys [player-hand
                    player-deck
@@ -173,30 +173,30 @@
                    opponent-hand
                    opponent-deck
                    opponent-discard
-                   opponent-influence                   
-                   
+                   opponent-influence
+
                    stats
                    cards-being-played]
             :as state}]
   (let [was-player?      (= who :player)
         deck             (if was-player? player-deck opponent-deck)
         deck-k           (if was-player? :player-deck :opponent-deck)
-        
+
         hand             (if was-player? player-hand opponent-hand)
         hand-k           (if was-player? :player-hand :opponent-hand)
-        
+
         discard          (if was-player? player-discard opponent-discard)
         discard-k        (if was-player? :player-discard :opponent-discard)
         influence-k      (if was-player? :player-influence :opponent-influence)
         influence-old    (if was-player? player-influence opponent-influence)
         influence-gained (:influence stats)
-        
+
         ;; Nachziehen
         discard-after-play (concat discard cards-being-played)
         enough-in-deck?    (> (count deck) hand-size)
 
         deck (if enough-in-deck? deck (shuffle discard-after-play))
-        
+
         new-hand (to-hand (take hand-size deck))
         new-deck (drop hand-size deck)]
     (assoc state
@@ -227,12 +227,15 @@
         card-idx (some (fn [[i c]] (when (= (:internal/id card)
                                            (:internal/id c))
                                     i)) blackmarket)
-        
-        ;; TODO Nachziehstapel unendlich machen?
-        
-        blackmarket-new      (dissoc blackmarket card-idx)
-        replacement-card     (first blackmarket-deck)
-        blackmarket-deck-new (drop 1 blackmarket-deck)
+
+        blackmarket-new        (dissoc blackmarket card-idx)
+        replacement-card       (first blackmarket-deck)
+        remaining-black-market (drop 1 blackmarket-deck)
+        blackmarket-deck-new   (if (empty? remaining-black-market)                         
+                                 (shuffle (remove
+                                           :planet?
+                                           (initial-blackmarket-deck)))
+                                 remaining-black-market)
 
         ;; Neue Karte einfügen
         blackmarket-new (assoc blackmarket-new card-idx replacement-card)
@@ -243,9 +246,9 @@
     (assoc state
            :blackmarket blackmarket-new
            :blackmarket-deck blackmarket-deck-new
-           
+
            :stats stats
-           
+
            discard-k (conj discard card))))
 
 (defmethod game-event :default [_ state] state)
