@@ -254,18 +254,20 @@
 
         ;; Nachziehen
         discard-after-play (concat discard cards-being-played)
-        enough-in-deck?    (> (count deck) hand-size)
+        enough-in-deck?    (>= (count deck) hand-size)
 
-        deck (if enough-in-deck? deck (shuffle discard-after-play))
+        draw-pile (if enough-in-deck? deck (shuffle discard-after-play))
 
-        new-hand (to-hand (take hand-size deck))
-        new-deck (drop hand-size deck)]
+        new-hand (to-hand (take hand-size draw-pile))
+        new-deck (drop hand-size draw-pile)
+
+        new-discard (if enough-in-deck? discard-after-play [])]
     (as-> state s
       (assoc s
              deck-k new-deck
              hand-k new-hand
              influence-k (+ influence-old influence-gained)
-             discard-k (if (not enough-in-deck?) discard-after-play [])
+             discard-k new-discard
              :cards-being-played []
              :stats initial-stats
              :turn (if was-player? :opponent :player))

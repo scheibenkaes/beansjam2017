@@ -89,4 +89,12 @@
    {:font-size "xx-large"}
    ]
 
+  [:.player-cards
+   {:font-size "xx-large"}
+   ]
+
+  [:.player-discard
+   {:font-size "xx-large"}
+   ]
+
   )

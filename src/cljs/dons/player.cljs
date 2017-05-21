@@ -29,14 +29,18 @@
   []
   (let [player-don (re-frame/subscribe [:player-don])
         influence  (re-frame/subscribe [:player-influence])
-        discard    (re-frame/subscribe [:player-discard])]
+        discard    (re-frame/subscribe [:player-discard])
+        deck       (re-frame/subscribe [:player-deck])]
     (fn []
       (println @discard)
       [:div.player-area.columns
        [:div.don.column.is-2
         [:div.columns
          [:div.column [dons/Don @player-don]]
-         [:div.column.player-influence (str "💪 " @influence)]]]
+         [:div.column
+          [:div.player-influence {:title "Einfluss"} (str "💪 " @influence)]
+          [:div.player-cards {:title "Verbleibende Karten im Deck"} (str "🗃 " (count @deck))]
+          [:div.player-discard {:title "Anzahl der Karten auf dem Ablagestapel"} (str "⤓ " (count @discard))]]]]
        [:div.hand.column.hand.is-8
         [:div.columns
          [:div.column.is-10 [Hand]]
