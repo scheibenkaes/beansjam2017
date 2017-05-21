@@ -121,20 +121,23 @@
            :opponent-hand (to-hand opponent-hand))))
 
 (defmethod game-event :event/play-card
-  [[_ {idx :idx card :card}] {:keys [player-hand
-                                     cards-being-played] :as state}]
+  [[_ {idx :idx card :card who :who}] {:keys [player-hand
+                                              opponent-hand
+                                              cards-being-played] :as state}]
   (let [trigger-effect (fn [state]
-                         ((:effect card) state))]
+                         ((:effect card) state))
+        hand-k (if (= who :player) :player-hand :opponent-hand)]
     (-> state
         (update-in [:cards-being-played] conj card)
-        (update-in [:player-hand] dissoc idx)
+        (update-in [hand-k] dissoc idx)
         trigger-effect)))
 
 (defmethod game-event :event/opponents-turn
-  [_ {:as state}]
+  [_ {:keys [opponent-hand] :as state}]
   (println "I'm a robot")
-  )
-
+  (if-let [[idx card] (first opponent-hand)]
+    (game-event [:event/play-card {:idx idx :card card :who :opponent}] state)
+    (assoc state :ai/done? true)))
 
 (def hand-size 5)
 

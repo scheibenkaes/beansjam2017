@@ -21,6 +21,6 @@
                     @game-started?
                     @player-turn?)
            [Button (fn [_]
-                     (re-frame/dispatch [:player-turn-done])) "Zug beenden"])
+                     (re-frame/dispatch [:turn-done :player])) "Zug beenden"])
          (when-not @player-turn?
            [Button (fn []) "AI spielt"])]))))

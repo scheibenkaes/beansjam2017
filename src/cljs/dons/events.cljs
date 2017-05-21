@@ -17,7 +17,7 @@
 (re-frame/reg-event-db
  :play-card
  (fn  [db [_ [hand-idx card]]]
-   (let [game (logic/game-event [:event/play-card {:idx hand-idx :card card}] (:game/game db))]
+   (let [game (logic/game-event [:event/play-card {:idx hand-idx :card card :who :player}] (:game/game db))]
      (assoc db :game/game game))))
 
 (def dbg (atom {}))
@@ -26,10 +26,28 @@
   (@dbg))
 
 (re-frame/reg-event-fx
- :player-turn-done
+ :turn-done
+ (fn  [cofx [_ who]]
+   (let [game        (logic/game-event [:event/turn-done who] (:game/game (:db cofx)))
+         was-player? (= who :player)]
+     (println who)
+     (if was-player?
+       {:db       (assoc (:db cofx) :game/game game)
+        :dispatch [:run-opponent nil]}
+       {:db (assoc (:db cofx) :game/game game)}))))
+
+(re-frame/reg-event-fx
+ :run-opponent
  (fn  [cofx [_ _]]
-   (let [game (logic/game-event [:event/turn-done :player] (:game/game (:db cofx)))]
-     {:db (assoc (:db cofx) :game/game game)})))
+   (println "running AI")
+   (let [game      (-> cofx :db :game/game)
+         new-state (logic/game-event [:event/opponents-turn nil] game)
+         ai-done?  (:ai/done? new-state)
+         new-state (if ai-done? (dissoc new-state :ai/done?) new-state)
+         effects   {:db (assoc (:db cofx) :game/game new-state)}]
+     (if ai-done?
+       (merge effects {:dispatch [:turn-done :opponent]} )
+       (merge effects {:dispatch-later [{:ms 500 :dispatch [:run-opponent nil]}]})))))
 
 (re-frame/reg-event-db
  :set-player-don
