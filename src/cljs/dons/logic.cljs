@@ -62,6 +62,18 @@
           :effect (fn [state]
                     (update-in state [:stats :influence] (partial + 2)))))
 
+(defn journalist []
+  (->card :id :card/journalist
+          :title "Journalist"
+          :cost 4
+          :description "Bekommt jede Story"
+          :effect-desc (str "+4 " influence-char ", -2 $")
+          :effect (fn [state]
+                    (-> state
+                        (update-in [:stats :influence] (partial + 4))
+                        (update-in [:stats :money] #(- % 2))))))
+
+
 ;;; PLANETS
 
 (defn jackson []
@@ -143,7 +155,9 @@
    (repeatedly 1 jackson)
    (repeatedly 1 mars)
    (repeatedly 1 jupiter)
+
    
+   (repeatedly 4 journalist)
    (repeatedly 10 goons)
    (repeatedly 10 concealer)))
 
