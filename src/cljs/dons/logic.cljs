@@ -74,7 +74,7 @@
                         (update-in [:stats :money] #(- % 2))))))
 
 
-;;; PLANETS
+;;; PLANETS 
 
 (defn jackson []
   (->card :id :planet/jackson
@@ -82,11 +82,36 @@
           :cost 5
           :title "Jackson"
           :description "Die Diva unter den Planeten"
-          :effect-desc (str "+4" influence-char " 1 $")
+          :effect-desc (str "+4 " influence-char " 1 $")
           :effect (fn [state]
                     (-> state
                         (update-in [:stats :influence] (partial + 4))
                         (update-in [:stats :money] (partial + 1))))))
+
+(defn uranus []
+  (->card :id :planet/uranus
+          :planet? true
+          :cost 3
+          :title "Uranus"
+          :description "Ist das überhaupt ein Planet? 😏"
+          :effect-desc (str "-1 " influence-char " 6 $")
+          :effect (fn [state]
+                    (-> state
+                        (update-in [:stats :influence] #(- % 1))
+                        (update-in [:stats :money] (partial + 6))))))
+
+
+(defn pluto []
+  (->card :id :planet/pluto
+          :planet? true
+          :cost 3
+          :title "Pluto"
+          :description "Ist er nicht süß der Kleine?"
+          :effect-desc (str "+ 3 " influence-char "+ 2 $")
+          :effect (fn [state]
+                    (-> state
+                        (update-in [:stats :influence] (partial + 3))
+                        (update-in [:stats :money] (partial + 2))))))
 
 (defn mars []
   (->card :id :planet/mars
@@ -94,7 +119,7 @@
           :cost 6
           :title "Mars"
           :description "Hat einen harten rechten Haken"
-          :effect-desc (str "+5 " influence-char)
+          :effect-desc (str "+ 5 " influence-char)
           :effect (fn [state]
                     (update-in state [:stats :influence] (partial + 5)))))
 
@@ -105,7 +130,7 @@
           :cost 5
           :title "Jupiter"
           :description "Ruht in sich selbst"
-          :effect-desc (str "+2 " influence-char ", +2 $")
+          :effect-desc (str "+ 2 " influence-char ", +2 $")
           :effect (fn [state]
                     (-> state
                         (update-in [:stats :influence] (partial + 2))
@@ -117,6 +142,23 @@
 (def all-planets
   (filter :planet? all-cards))
 
+(defn initial-deck []
+  (concat
+   (repeatedly 7 collector)
+   (repeatedly 3 noob)))
+
+(defn initial-blackmarket-deck []
+  (concat
+   (repeatedly 1 jackson)
+   (repeatedly 1 mars)
+   (repeatedly 1 jupiter)
+   (repeatedly 1 uranus)
+   (repeatedly 1 pluto)
+
+   
+   (repeatedly 3 journalist)
+   (repeatedly 10 goons)
+   (repeatedly 10 concealer)))
 
 ;;; events
 
@@ -143,23 +185,7 @@
 
 (def num-cards-at-begin 5)
 
-(defn initial-deck []
-  (concat
-   (repeatedly 7 collector)
-   (repeatedly 3 noob)))
-
 (def num-cards-blackmarket 5)
-
-(defn initial-blackmarket-deck []
-  (concat
-   (repeatedly 1 jackson)
-   (repeatedly 1 mars)
-   (repeatedly 1 jupiter)
-
-   
-   (repeatedly 4 journalist)
-   (repeatedly 10 goons)
-   (repeatedly 10 concealer)))
 
 (defn to-hand [coll]
   (into (sorted-map)
