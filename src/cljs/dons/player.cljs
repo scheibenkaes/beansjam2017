@@ -16,10 +16,12 @@
           (map-indexed (fn [idx [hand-idx card]]
                          ^{:key (str "card" idx)}
                          [:div.column
-                          [cards/Card card]
+                          [:div.columns>div.column
+                           [cards/Card card]]
                           (when (= :player @turn)
-                            [:button.button {:on-click (fn [_]
-                                                         (re-frame/dispatch [:play-card [card]]))} "Karte spielen"])])
+                            [:div.columns>div.column
+                             [:button.button {:on-click (fn [_]
+                                                          (re-frame/dispatch [:play-card [card]]))} "Karte spielen"]])])
                        @hand)))])))
 
 

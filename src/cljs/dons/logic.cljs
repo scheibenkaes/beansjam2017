@@ -69,6 +69,8 @@
           :planet? true
           :cost 5
           :title "Jackson"
+          :description "Die Diva unter den Planeten"
+          :effect-desc (str "+4" influence-char " 1 $")
           :effect (fn [state]
                     (-> state
                         (update-in [:stats :influence] (partial + 4))
@@ -136,12 +138,13 @@
 (defmulti game-event (fn [[e _] state] e))
 
 (defmethod game-event :event/setup
-  [_ state]
+  [_ _]
   (let [[player-hand player-deck]      (split-at num-cards-at-begin (shuffle (initial-deck)))
         [opponent-hand opponent-deck]  (split-at num-cards-at-begin (shuffle (initial-deck)))
         [blackmarket blackmarket-deck] (split-at num-cards-blackmarket (shuffle (initial-blackmarket-deck)))]
-    (assoc state
+    (assoc initial-state
            :game-state :state/started
+           :winner nil
            :player-deck player-deck
            :opponent-deck opponent-deck
            :blackmarket (to-hand blackmarket)

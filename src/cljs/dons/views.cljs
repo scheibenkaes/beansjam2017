@@ -70,7 +70,10 @@
                                           opponent-influence)
                      " Einflusspunkten " (if player-won? "Du" "der Computer")
                      "!!1!"
-                     )]]]))))
+                     )]
+          [:div
+           [:button.button {:on-click (fn [_]
+                                        (re-frame/dispatch [:start-game]))} "Erneut spielen"]]]]))))
 
 (comment
   (re-frame/dispatch [:show-end-screen])
