@@ -36,8 +36,6 @@
           (doall
            (map-indexed (fn [idx [card-idx card]]
                           (let [too-expensive? (> (:cost card) (:money @stats))]
-                            (println "render " card)
-
                             ^{:key (str idx)}
                             [:div.column
                              [cards/Card card]

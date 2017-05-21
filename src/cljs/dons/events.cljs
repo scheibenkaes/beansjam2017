@@ -63,7 +63,7 @@
 (re-frame/reg-event-db
  :buy-card
  (fn  [db [_ {:keys [who card] :as which}]]
-   (let [new-state (logic/game-event [:buy-card which] (:game/game db))]
+   (let [new-state (logic/game-event [:event/buy-card which] (:game/game db))]
      (reset! dbg {:game new-state :event [:buy card]})
      (assoc db :game/game new-state))))
 

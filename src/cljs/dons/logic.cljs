@@ -151,12 +151,26 @@
         (update-in [hand-k] dissoc idx)
         trigger-effect)))
 
+
 (defmethod game-event :event/opponents-turn
-  [_ {:keys [opponent-hand] :as state}]
-  (println "I'm a robot")
+  [_ {:keys [opponent-hand blackmarket] :as state}]
+  (println "I'm a robot" (:stats state))
   (if-let [[idx card] (first opponent-hand)]
-    (game-event [:event/play-card {:idx idx :card card :who :opponent}] state)
-    (assoc state :ai/done? true)))
+    (game-event [:event/play-card {:card card :who :opponent}] state)
+
+    ;; Keine Karten mehr auf der Hand.
+    ;;
+    ;; AI soll die teuersten Karten die er bekommen kann kaufen
+    (do
+      (let [money            (get-in state [:stats :money])
+            cards-for-sale   (sort-by :cost > (vals blackmarket))
+            first-affordable (some (fn [{cost :cost :as c}]
+                                     (when (>= money cost) c)) cards-for-sale)]
+        (println "AI has " money " $")
+        (println "AI I can afford " first-affordable)
+        (if first-affordable
+          (game-event [:event/buy-card {:who :opponent :card first-affordable}] state)
+          (assoc state :ai/done? true))))))
 
 (def hand-size 5)
 
@@ -217,11 +231,19 @@
            :stats initial-stats
            :turn (if was-player? :opponent :player))))
 
+(def dbg (atom {}))
+
+(comment
+
+  (-> @dbg)
+
+  )
+
 ;; Karte wird dem Ablagestapel hinzugefügt
 ;; Karte wird aus dem Schwarzmarkt entfernt
 ;; Karte wird mit neuer ersetzt
 ;; Geld wird abgezogen
-(defmethod game-event :buy-card
+(defmethod game-event :event/buy-card
   [[_ {:keys [who card]}]
    {:keys [blackmarket
            blackmarket-deck
@@ -251,6 +273,12 @@
 
         stats (update stats :money (fn [amount]
                                      (- amount (:cost card))))]
+
+    (when (not was-player?)
+      (println "storing in dbg")
+      (reset! dbg {:card card
+                   :state state}))
+
     (assert (int? card-idx) (str "no card with id " (:internal/id card) " found"))
     (assoc state
            :blackmarket blackmarket-new
@@ -260,4 +288,5 @@
 
            discard-k (conj discard card))))
 
-(defmethod game-event :default [_ state] state)
+(defmethod game-event :default [_ state]
+  (assert false "Unknown game event"))
