@@ -21,13 +21,18 @@
 (defn Main
   ""
   []
-  (let [being-played (re-frame/subscribe [:cards-being-played])]
+  (let [being-played (re-frame/subscribe [:cards-being-played])
+        blackmarket (re-frame/subscribe [:blackmarket])]
     (fn []
       [:div.main
        [:div.columns
         [:div.column
          [:h1 "Interstellarer Schwarz-Markt"]]
-        [:div.column [cards/Card (logic/->card :id :test)]]
+        [:div.column.buying
+         [:div.columns
+          (map-indexed (fn [idx [card-idx card]]
+                         ^{:key (str idx)}
+                         [:div.column [cards/Card card]]) @blackmarket)]]
         [:div.column.is-2 [stats/Stats]]]
        [:div.being-played.columns
         (map-indexed (fn [idx card]

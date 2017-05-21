@@ -44,11 +44,6 @@
    (from-game-state db :opponent-influence)))
 
 (re-frame/reg-sub
- :player-hand
- (fn [db]
-   (from-game-state db :player-hand)))
-
-(re-frame/reg-sub
  :game-stats
  (fn [db]
    (from-game-state db :stats)))
@@ -82,3 +77,8 @@
 (re-frame/reg-sub
  :opponent-deck
  (fn [db] (from-game-state db :opponent-deck)))
+
+(re-frame/reg-sub
+ :blackmarket
+ (fn [db]
+   (from-game-state db :blackmarket)))

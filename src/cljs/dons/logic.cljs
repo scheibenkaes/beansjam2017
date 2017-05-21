@@ -80,7 +80,8 @@
    :player-influence   0
    :opponent-influence 0
    :stats              initial-stats
-   :blackmarket        []})
+   :blackmarket        (sorted-map)
+   :blackmarket-deck   []})
 
 (def num-cards-at-begin 5)
 
@@ -89,19 +90,14 @@
    (repeat 7 collector)
    (repeat 3 noob)))
 
-(def num-blackmarket 5)
+(def num-cards-blackmarket 5)
 
-(defn initial-blackmarket-deck
-  ""
-  []
+(defn initial-blackmarket-deck []
   (concat
    (repeat 1 jackson)
    (repeat 1 mars)
    (repeat 10 goons)
-   (repeat 10 collector)
-   (repeat 10 concealer)
-   (repeat 10 noob)))
-
+   (repeat 10 concealer)))
 
 (defn to-hand [coll]
   (into (sorted-map)
@@ -111,12 +107,15 @@
 
 (defmethod game-event :event/setup
   [_ state]
-  (let [[player-hand player-deck]     (split-at num-cards-at-begin (shuffle (initial-deck)))
-        [opponent-hand opponent-deck] (split-at num-cards-at-begin (shuffle (initial-deck)))]
+  (let [[player-hand player-deck]      (split-at num-cards-at-begin (shuffle (initial-deck)))
+        [opponent-hand opponent-deck]  (split-at num-cards-at-begin (shuffle (initial-deck)))
+        [blackmarket blackmarket-deck] (split-at num-cards-blackmarket (shuffle (initial-blackmarket-deck)))]
     (assoc state
            :game-state :state/started
            :player-deck player-deck
            :opponent-deck opponent-deck
+           :blackmarket (to-hand blackmarket)
+           :blackmarket-deck blackmarket-deck
            :player-hand (to-hand player-hand)
            :opponent-hand (to-hand opponent-hand))))
 
