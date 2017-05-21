@@ -15,7 +15,7 @@
        [:div.column.is-three-quarters
         [:h2 "Dons"]]
        [:div.column.opponent
-        [:div (str "💪 " @influence)]]])))
+        [:div.influence (str "💪 " @influence)]]])))
 
 
 (defn Main
@@ -46,10 +46,12 @@
                                                                                            :card card}]))} "Kaufen"])])) @blackmarket))]]
         [:div.column.is-2 [stats/Stats]]]
        [:div.being-played.columns
-        (map-indexed (fn [idx card]
-                       ^{:key (str idx)}
-                       [:div.column [cards/Card card]])
-                     @being-played)]]
+        [:div.column.is-offset-2]
+        [:div.column.is-11>div.columns
+         (map-indexed (fn [idx card]
+                        ^{:key (str idx)}
+                        [:div.column.is-2 [cards/Card card]])
+                      @being-played)]]]
       )))
 
 (defn EndScreen

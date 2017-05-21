@@ -25,10 +25,11 @@
 
 (defn Player
   []
-  (let [player-don (re-frame.core/subscribe [:player-don])
-        influence (re-frame.core/subscribe [:player-influence])
-        discard (re-frame/subscribe [:player-discard])]
+  (let [player-don (re-frame/subscribe [:player-don])
+        influence  (re-frame/subscribe [:player-influence])
+        discard    (re-frame/subscribe [:player-discard])]
     (fn []
+      (println @discard)
       [:div.player-area.columns
        [:div.don.column.is-2
         [:div.columns
@@ -39,6 +40,6 @@
          [:div.column.is-10 [Hand]]
          [:div.column.is-2 {:title "Ablagestapel"}
           (when (pos? (count @discard))
-           [cards/Card {:title "" :id "player-discard" :img "img/card-back.png"}])]]]
+            [cards/Card {:title "" :id "player-discard" :img "img/card-back.png"}])]]]
        [:div.hand.column.controls.is-2
         [ctrls/Ctrls]]])))

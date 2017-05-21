@@ -236,7 +236,7 @@
              deck-k new-deck
              hand-k new-hand
              influence-k (+ influence-old influence-gained)
-             discard-k (if enough-in-deck? discard-after-play [])
+             discard-k (if (not enough-in-deck?) discard-after-play [])
              :cards-being-played []
              :stats initial-stats
              :turn (if was-player? :opponent :player))

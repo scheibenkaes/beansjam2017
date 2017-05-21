@@ -35,24 +35,41 @@
            :width "100%" :min-width "100%"
            }]
 
-  [:.header {:height "33%" :min-height "33%"}]
+  [:.header {:height "33%" :min-height "33%"}
+   [:h2 {:font-size "xx-large"}]
+
+   [:.opponent
+    {:font-size "xx-large"}]
+   ]
   [:.main {:height "33%" :min-height "33%"}]
   [:.player-area {
                   :height "33%" :min-height "33%"
                   :vertical-align "bottom"
                   :padding-top "115px"}]
 
-  [:.card
+  [:&.card
    {
-    :height "85px" :min-height "85px"
-    :width "64px" :min-width "64px"
-
+;;    :height "85px" :min-height "85px"
+    :width "128px" :min-width "128px"
+    :background-color "#323c39"
+    :border "none"
+    :box-shadow ""
+    :display "inline-block"
     }
-   [:.title {:position "relative"
+   [:.title {:position "absolute"
              :font-size "small"
-             :top "-85px"
-             :left "3px"
-             :color "white"}]
+             :top "9px"
+             :left "9px"
+             :font-weight "bold"
+             :color "black"}]
+
+   [:.cost {:position "absolute"
+            
+            :font-size "small"
+            :top "7px"
+            :left "108px"
+            :font-weight "bold"
+            :color "black"}]
    ]
 
   [:.stats
