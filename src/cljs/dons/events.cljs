@@ -3,6 +3,9 @@
               [dons.db :as db]
               [dons.logic :as logic]))
 
+(def dbg (atom {}))
+
+
 (re-frame/reg-event-db
  :initialize-db
  (fn  [_ _]
@@ -16,21 +19,28 @@
 
 (re-frame/reg-event-db
  :play-card
- (fn  [db [_ [hand-idx card]]]
-   (let [game (logic/game-event [:event/play-card {:idx hand-idx :card card :who :player}] (:game/game db))]
+ (fn  [db [_ [card]]]
+   (let [game (logic/game-event [:event/play-card {:card card :who :player}] (:game/game db))]
+     (reset! dbg {:game game :event [:play card]})
      (assoc db :game/game game))))
 
-(def dbg (atom {}))
-
 (comment
-  (@dbg))
+  (get (:blackmarket @dbg) 2)
+
+  (:stats @dbg)
+
+  (-> @dbg :game :blackmarket (get 2))
+
+  (-> @dbg :event)
+  
+  )
+
 
 (re-frame/reg-event-fx
  :turn-done
  (fn  [cofx [_ who]]
    (let [game        (logic/game-event [:event/turn-done who] (:game/game (:db cofx)))
          was-player? (= who :player)]
-     (println who)
      (if was-player?
        {:db       (assoc (:db cofx) :game/game game)
         :dispatch [:run-opponent nil]}
@@ -48,6 +58,14 @@
      (if ai-done?
        (merge effects {:dispatch [:turn-done :opponent]} )
        (merge effects {:dispatch-later [{:ms 500 :dispatch [:run-opponent nil]}]})))))
+
+
+(re-frame/reg-event-db
+ :buy-card
+ (fn  [db [_ {:keys [who card] :as which}]]
+   (let [new-state (logic/game-event [:buy-card which] (:game/game db))]
+     (reset! dbg {:game new-state :event [:buy card]})
+     (assoc db :game/game new-state))))
 
 (re-frame/reg-event-db
  :set-player-don

@@ -26,6 +26,7 @@
         player-turn? (re-frame/subscribe [:is-player-turn?])
         stats        (re-frame/subscribe [:game-stats])]
     (fn []
+      (assert (sorted? @blackmarket) "BLACKmarket not sorted")
       [:div.main
        [:div.columns
         [:div.column.is-2
@@ -34,12 +35,17 @@
          [:div.columns
           (doall
            (map-indexed (fn [idx [card-idx card]]
-                          (let [too-expensive? (> (:cost card) (-> @stats :money))]
+                          (let [too-expensive? (> (:cost card) (:money @stats))]
+                            (println "render " card)
+
                             ^{:key (str idx)}
                             [:div.column
                              [cards/Card card]
                              (when @player-turn?
-                               [:button.button {:disabled (if too-expensive? true false)} "Kaufen"])])) @blackmarket))]]
+                               [:button.button {:disabled (if too-expensive? true false)
+                                                :on-click (fn [_]
+                                                            (re-frame/dispatch [:buy-card {:who :player
+                                                                                           :card card}]))} "Kaufen"])])) @blackmarket))]]
         [:div.column.is-2 [stats/Stats]]]
        [:div.being-played.columns
         (map-indexed (fn [idx card]

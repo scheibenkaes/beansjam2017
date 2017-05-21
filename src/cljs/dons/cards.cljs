@@ -1,7 +1,8 @@
 (ns dons.cards)
 
-(defn Card [{:keys [title img id]}]
-  (fn []
-    [:div.card {:class (str id)}
-     [:figure.image [:img {:src img}]]
-     [:span.title title]]))
+(defn Card []
+  (fn [{:keys [title img id description] :as card}]
+   (let [desc (or description title)]
+     [:div.card {:class (str id) :id (str (:internal/id card))}
+      [:figure.image {:title desc} [:img {:src img}]]
+      [:span.title {:title desc} title]])))

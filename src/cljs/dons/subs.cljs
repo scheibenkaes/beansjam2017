@@ -82,3 +82,13 @@
  :blackmarket
  (fn [db]
    (from-game-state db :blackmarket)))
+
+
+(re-frame/reg-sub
+ :player-discard
+ (fn [db] (from-game-state db :player-discard)))
+
+
+(re-frame/reg-sub
+ :opponent-discard
+ (fn [db] (from-game-state db :opponent-discard)))

@@ -4,36 +4,38 @@
 (defn ->card [& {:keys [id img title effect text planet? cost]
                  :or   {img     "img/card.png" title "No Title" effect identity text ""
                         planet? false          cost  1}}]
-  {:id      id
-   :cost    cost
-   :card?   true
-   :planet? planet?
-   :img     img
-   :title   title
-   :text    text
-   :effect  effect})
+  {:id          id
+   :cost        cost
+   :card?       true
+   :planet?     planet?
+   :img         img
+   :title       title
+   :text        text
+   :effect      effect
+   :internal/id (gensym)})
 
 ;;; CARDS
 
-(def noob
+(defn noob []
   (->card :id :card/noob
           :title "Space Noob"
+          :description "Sie sind noch etwas grün hinter den Ohren."
           :effect (fn [state]
                     (update-in state [:stats :influence] (partial + 1)))))
 
-(def collector
+(defn collector []
   (->card :id :card/collector
           :title "Eintreiber"
           :effect (fn [state]
                     (update-in state [:stats :money] (partial + 1)))))
 
-(def concealer
+(defn concealer []
   (->card :id :card/concealer
           :title "Space Hehler"
           :effect (fn [state]
                     (update-in state [:stats :money] (partial + 2)))))
 
-(def goons
+(defn goons []
   (->card :id :card/goons
           :title "Schlägertypen"
           :effect (fn [state]
@@ -41,20 +43,20 @@
 
 ;;; PLANETS
 
-(def jackson
+(defn jackson []
   (->card :id :planet/jackson
           :planet? true
           :cost 5
           :title "Jackson"))
 
-(def mars
+(defn mars []
   (->card :id :planet/mars
           :planet? true
           :cost 6
           :title "Mars"))
 
 (def all-cards
-  #{noob collector concealer goons jackson mars})
+  #{(noob) (collector) (concealer) (goons) (jackson) (mars)})
 
 (def all-planets
   (filter :planet? all-cards))
@@ -87,17 +89,17 @@
 
 (defn initial-deck []
   (concat
-   (repeat 7 collector)
-   (repeat 3 noob)))
+   (repeatedly 7 collector)
+   (repeatedly 3 noob)))
 
 (def num-cards-blackmarket 5)
 
 (defn initial-blackmarket-deck []
   (concat
-   (repeat 1 jackson)
-   (repeat 1 mars)
-   (repeat 10 goons)
-   (repeat 10 concealer)))
+   (repeatedly 1 jackson)
+   (repeatedly 1 mars)
+   (repeatedly 10 goons)
+   (repeatedly 10 concealer)))
 
 (defn to-hand [coll]
   (into (sorted-map)
@@ -120,12 +122,21 @@
            :opponent-hand (to-hand opponent-hand))))
 
 (defmethod game-event :event/play-card
-  [[_ {idx :idx card :card who :who}] {:keys [player-hand
-                                              opponent-hand
-                                              cards-being-played] :as state}]
+  [[_ {card :card who :who}] {:keys [player-hand
+                                     opponent-hand
+                                     cards-being-played] :as state}]
   (let [trigger-effect (fn [state]
                          ((:effect card) state))
-        hand-k (if (= who :player) :player-hand :opponent-hand)]
+        hand-k (if (= who :player) :player-hand :opponent-hand)
+        hand (get state hand-k)
+
+        idx  (some (fn [[i c]] (when (= (:internal/id card)
+                                       (:internal/id c))
+                                i)) hand)]
+    (println "PLAY i" (:internal/id card) " " idx)
+    (assert (int? idx) (str "No card with id " (:internal/id card) " in hand " hand))
+
+    
     (-> state
         (update-in [:cards-being-played] conj card)
         (update-in [hand-k] dissoc idx)
@@ -197,5 +208,44 @@
            :stats initial-stats
            :turn (if was-player? :opponent :player))))
 
+;; Karte wird dem Ablagestapel hinzugefügt
+;; Karte wird aus dem Schwarzmarkt entfernt
+;; Karte wird mit neuer ersetzt
+;; Geld wird abgezogen
+(defmethod game-event :buy-card
+  [[_ {:keys [who card]}]
+   {:keys [blackmarket
+           blackmarket-deck
+           player-discard
+           opponent-discard
+           stats]
+    :as   state}]
+  (let [was-player? (= who :player)
+        discard     (if was-player? player-discard opponent-discard)
+        discard-k   (if was-player? :player-discard :opponent-discard)
+
+        card-idx (some (fn [[i c]] (when (= (:internal/id card)
+                                           (:internal/id c))
+                                    i)) blackmarket)
+        
+        ;; TODO Nachziehstapel unendlich machen?
+        
+        blackmarket-new      (dissoc blackmarket card-idx)
+        replacement-card     (first blackmarket-deck)
+        blackmarket-deck-new (drop 1 blackmarket-deck)
+
+        ;; Neue Karte einfügen
+        blackmarket-new (assoc blackmarket-new card-idx replacement-card)
+
+        stats (update stats :money (fn [amount]
+                                     (- amount (:cost card))))]
+    (assert (int? card-idx) (str "no card with id " (:internal/id card) " found"))
+    (assoc state
+           :blackmarket blackmarket-new
+           :blackmarket-deck blackmarket-deck-new
+           
+           :stats stats
+           
+           discard-k (conj discard card))))
 
 (defmethod game-event :default [_ state] state)
