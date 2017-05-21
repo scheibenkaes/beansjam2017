@@ -21,11 +21,17 @@
  (fn [db]
    (from-game-state db :turn)))
 
-
 (re-frame/reg-sub
  :game-state
  (fn [db]
    (from-game-state db :game-state)))
+
+(re-frame/reg-sub
+ :game-started?
+ (fn [db]
+   (re-frame/subscribe [:game-state]))
+ (fn [state]
+   (not= :state/pre-game state)))
 
 (re-frame/reg-sub
  :cards-being-played
@@ -46,6 +52,15 @@
  :game-stats
  (fn [db]
    (from-game-state db :stats)))
+
+(re-frame/reg-sub
+ :turn
+ (fn [db] (from-game-state db :turn)))
+
+(re-frame/reg-sub
+ :is-player-turn?
+ (fn [db] (re-frame/subscribe [:turn]))
+ (fn [turn] (= turn :player)))
 
 (re-frame/reg-sub
  :player-hand

@@ -89,6 +89,20 @@
    (repeat 7 collector)
    (repeat 3 noob)))
 
+(def num-blackmarket 5)
+
+(defn initial-blackmarket-deck
+  ""
+  []
+  (concat
+   (repeat 1 jackson)
+   (repeat 1 mars)
+   (repeat 10 goons)
+   (repeat 10 collector)
+   (repeat 10 concealer)
+   (repeat 10 noob)))
+
+
 (defn to-indexed-map [coll]
   (into (sorted-map)
         (map-indexed (fn [idx c] [idx c]) coll)))
@@ -115,6 +129,55 @@
         (update-in [:cards-being-played] conj card)
         (update-in [:player-hand] dissoc idx)
         trigger-effect)))
+
+
+(def hand-size 5)
+
+(defn has-enough-cards [deck]
+  (>= (count deck) hand-size))
+
+(defn cards-needed-after-shuffle [deck ])
+
+;; * Einfluss wird gut geschrieben
+;;
+;; * Geld verfällt
+;;
+;; * Gespielte Karten auf den Ablagestapel
+;;
+;; * Sind weniger als 5 Karten im Nachziehstapel?
+;; Ja: Gespielte + Abgelegte bilden neues Deck
+;;     Es werden 5 - x Karten vom Deck gezogen
+;; Nein: 5 Ziehen
+;; 
+;; * Der andere ist dran
+;; 
+(defmethod game-event :event/turn-done
+  [[_ who] {:keys [player-hand
+                   player-deck
+                   player-discard
+                   
+                   opponent-hand
+                   opponent-deck
+                   opponent-discard
+
+                   stats
+                   cards-being-played]
+            :as state}]
+  (println "done" who)
+  (let [was-player? (= who :player)
+        deck        (if was-player? player-deck opponent-deck)
+        discard     (if was-player? player-discard opponent-discard)
+
+        discard-after-play (concat discard cards-being-played)
+        influence-gained   (:influence stats)
+        remaining-in-deck  (count deck)]
+    (assoc state
+           :cards-being-played []
+           :stats initial-stats
+           :opponent-hand (if was-player? opponent-hand [])
+           :turn (if was-player? :opponent :player)))
+ )
+
 
 (defmethod game-event :default [_ state] state)
 

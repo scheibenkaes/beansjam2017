@@ -21,6 +21,12 @@
      (assoc db :game/game game))))
 
 (re-frame/reg-event-db
+ :player-turn-done
+ (fn  [db [_ _]]
+   (let [game (logic/game-event [:event/turn-done :player] (:game/game db))]
+     (assoc db :game/game game))))
+
+(re-frame/reg-event-db
  :set-player-don
  (fn  [db [_ don]]
    (assoc db :player/don don)))
