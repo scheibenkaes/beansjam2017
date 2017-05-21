@@ -5,13 +5,14 @@
 (def height "1050px")
 
 (defstyles screen
-  [:body {}]
+  [:html {
+          :background "url(../img/background.png) repeat"
+          }]
 
   [:.game-container
    {
     :width width
     :height height
-    :background "url(../img/background.png)"
     :color "#fff"
     }]
 
