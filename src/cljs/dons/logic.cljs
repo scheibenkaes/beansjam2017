@@ -1,7 +1,7 @@
 (ns dons.logic)
 
 
-(defn ->card [& {:keys [id img title effect text planet? cost]
+(defn ->card [& {:keys [id img title effect text planet? cost description]
                  :or   {img     "img/card.png" title "No Title" effect identity text ""
                         planet? false          cost  1}}]
   {:id          id
@@ -10,6 +10,7 @@
    :planet?     planet?
    :img         img
    :title       title
+   :description description
    :text        text
    :effect      effect
    :internal/id (gensym)})
