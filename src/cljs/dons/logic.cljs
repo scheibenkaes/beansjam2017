@@ -130,6 +130,11 @@
         (update-in [:player-hand] dissoc idx)
         trigger-effect)))
 
+(defmethod game-event :event/opponents-turn
+  [_ {:as state}]
+  (println "I'm a robot")
+  )
+
 
 (def hand-size 5)
 
