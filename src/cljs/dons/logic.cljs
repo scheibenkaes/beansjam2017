@@ -32,12 +32,14 @@
 (defn concealer []
   (->card :id :card/concealer
           :title "Space Hehler"
+          :cost 2
           :effect (fn [state]
                     (update-in state [:stats :money] (partial + 2)))))
 
 (defn goons []
   (->card :id :card/goons
           :title "Schlägertypen"
+          :cost 3
           :effect (fn [state]
                     (update-in state [:stats :influence] (partial + 2)))))
 
